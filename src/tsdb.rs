@@ -331,7 +331,9 @@ impl<S: Storage> Tsdb<S> {
                 }
                 sector.end_idx = tsl.addr_index;
                 sector.empty_idx += LOG_IDX_DATA_SIZE;
-                sector.empty_data -= wg_align(tsl.log_len);
+                // saturating: a corrupt over-large log_len must not panic in
+                // debug builds; the `remain` guard below catches the error.
+                sector.empty_data = sector.empty_data.saturating_sub(wg_align(tsl.log_len));
                 tsl.addr_index += LOG_IDX_DATA_SIZE;
                 let cost = LOG_IDX_DATA_SIZE as i64 + wg_align(tsl.log_len) as i64;
                 if sector.remain > cost {

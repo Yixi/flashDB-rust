@@ -126,3 +126,44 @@ fn power_loss_during_delete_keeps_consistency() {
         assert_eq!(db.get_vec(b"other").as_deref(), Some(&b"keep-me"[..]));
     }
 }
+
+use flashdb::Tsdb;
+
+/// Opening a database over arbitrary garbage must never panic; it should
+/// reformat and come up empty and usable.
+#[test]
+fn open_on_garbage_does_not_panic() {
+    for fill in [0x00u8, 0xFF, 0x5A, 0xA5] {
+        // KVDB
+        let bytes = vec![fill; MAX_SIZE as usize];
+        let mut kv = Kvdb::new(
+            RamStorage::from_bytes(bytes),
+            SECTOR_SIZE,
+            MAX_SIZE,
+            None,
+        )
+        .unwrap();
+        assert!(kv.get_vec(b"anything").is_none());
+        kv.set(b"k", b"v").unwrap();
+        assert_eq!(kv.get_vec(b"k").as_deref(), Some(&b"v"[..]));
+
+        // TSDB
+        let tmax = SECTOR_SIZE * 8;
+        let bytes = vec![fill; tmax as usize];
+        let mut t = 0i32;
+        let mut ts = Tsdb::new(
+            RamStorage::from_bytes(bytes),
+            SECTOR_SIZE,
+            tmax,
+            move || {
+                t += 2;
+                t
+            },
+            128,
+        )
+        .unwrap();
+        assert_eq!(ts.collect().len(), 0);
+        ts.append(b"log").unwrap();
+        assert_eq!(ts.collect().len(), 1);
+    }
+}
