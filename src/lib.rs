@@ -23,7 +23,18 @@
 extern crate alloc;
 
 mod crc32;
+mod db;
+mod def;
 mod error;
+mod flash;
+mod status;
+mod storage;
 
 pub use crc32::calc_crc32;
+pub use db::DefaultKv;
+pub use def::{TslStatus, KV_NAME_MAX};
 pub use error::{FdbError, Result};
+pub use storage::{RamStorage, Storage};
+
+#[cfg(feature = "std")]
+pub use storage::FileStorage;
