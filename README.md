@@ -43,6 +43,30 @@ assert_eq!(&buf[..n], b"42");
 See the [`examples`](examples) directory for the KV and TSDB samples ported from
 upstream, and the [`tests`](tests) directory for the ported FlashDB test suites.
 
+## Compatibility & verification
+
+The on-storage format is byte-compatible with upstream FlashDB built for the
+NOR-flash / file mode (write granularity 1). This was verified both ways:
+
+- the original C FlashDB writes a KVDB + TSDB in file mode, and this crate reads
+  every key/log back correctly;
+- this crate writes a KVDB + TSDB, and the original C FlashDB reads them back
+  correctly.
+
+In addition, both upstream test suites (`fdb_kvdb_tc.c`, `fdb_tsdb_tc.c`) are
+ported as integration tests — including the garbage-collection tests with their
+exact oldest-sector assertions and the exhaustive time-range boundary queries —
+and all pass. Run them with `cargo test`.
+
+### Configuration notes
+
+This port targets the most common upstream configuration:
+
+- write granularity 1 (NOR flash / file mode),
+- 32-bit timestamps,
+- variable-size TSDB blobs,
+- KV caches disabled (a pure speed optimisation upstream; behaviour is identical).
+
 ## License
 
 Apache-2.0, matching upstream FlashDB.
