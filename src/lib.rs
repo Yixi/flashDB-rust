@@ -27,6 +27,7 @@ mod db;
 mod def;
 mod error;
 mod flash;
+mod kvdb;
 mod status;
 mod storage;
 
@@ -34,6 +35,7 @@ pub use crc32::calc_crc32;
 pub use db::DefaultKv;
 pub use def::{TslStatus, KV_NAME_MAX};
 pub use error::{FdbError, Result};
+pub use kvdb::{Kv, KvIterator, Kvdb};
 pub use storage::{RamStorage, Storage};
 
 #[cfg(feature = "std")]
