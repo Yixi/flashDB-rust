@@ -50,3 +50,45 @@ fn kv_many_triggers_gc() {
 fn alloc_key(k: u32) -> Vec<u8> {
     format!("key{k}").into_bytes()
 }
+
+use flashdb::{Tsdb, TslStatus};
+
+#[test]
+fn tsdb_basic_append_iter_query() {
+    let storage = RamStorage::new(4096 * 16);
+    let mut counter = 0i32;
+    let mut db = Tsdb::new(
+        storage,
+        4096,
+        4096 * 16,
+        move || {
+            counter += 2;
+            counter
+        },
+        128,
+    )
+    .unwrap();
+
+    for i in 1..=256i32 {
+        let t = i * 2;
+        let s = t.to_string();
+        db.append(s.as_bytes()).unwrap();
+    }
+
+    let mut count = 0;
+    db.iter(|tsl, data| {
+        let s = core::str::from_utf8(data).unwrap();
+        assert_eq!(tsl.time(), s.parse::<i32>().unwrap());
+        count += 1;
+        false
+    });
+    assert_eq!(count, 256);
+
+    assert_eq!(db.query_count(0, 256 * 2, TslStatus::Write), 256);
+
+    // reverse iteration yields times in descending order
+    let rev = db.collect_by_time(256 * 2, 0);
+    assert_eq!(rev.len(), 256);
+    assert_eq!(rev[0].time(), 512);
+    assert_eq!(rev[255].time(), 2);
+}

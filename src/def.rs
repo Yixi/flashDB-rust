@@ -18,9 +18,6 @@ pub(crate) const BYTE_WRITTEN: u8 = 0x00;
 /// A 32-bit "unused"/erased word (all bits set, since [`BYTE_ERASED`] is 0xFF).
 pub(crate) const DATA_UNUSED: u32 = 0xFFFF_FFFF;
 
-/// Sentinel returned when a lookup for the "next" address fails.
-pub(crate) const FAILED_ADDR: u32 = 0xFFFF_FFFF;
-
 /// Maximum length of a KV name (`FDB_KV_NAME_MAX`).
 pub const KV_NAME_MAX: usize = 64;
 
@@ -52,6 +49,9 @@ pub(crate) const fn align_down(size: u32, align: u32) -> u32 {
 // ---------------------------------------------------------------------------
 // Status enumerations
 // ---------------------------------------------------------------------------
+
+/// Timestamp type, `fdb_time_t` (32-bit configuration).
+pub type FdbTime = i32;
 
 /// Number of KV node states (`FDB_KV_STATUS_NUM`).
 pub(crate) const KV_STATUS_NUM: usize = 6;
