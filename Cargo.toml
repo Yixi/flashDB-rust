@@ -1,0 +1,22 @@
+[package]
+name = "flashdb"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "A faithful Rust rewrite of armink/FlashDB: an ultra-lightweight embedded KV + time-series database for flash/file storage."
+license = "Apache-2.0"
+repository = "https://github.com/armink/FlashDB"
+readme = "README.md"
+keywords = ["database", "embedded", "kv", "tsdb", "flash"]
+categories = ["database-implementations", "embedded", "no-std::no-alloc"]
+
+[lib]
+name = "flashdb"
+
+[features]
+default = ["std"]
+# Enable the std-backed file storage backend and std error integration.
+std = []
+
+[profile.release]
+opt-level = 3

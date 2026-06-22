@@ -1,0 +1,7 @@
+/target
+Cargo.lock
+# database directories created by tests / samples
+/fdb_kvdb1
+/fdb_tsdb1
+/storage_tsdb
+*.fdb.*
