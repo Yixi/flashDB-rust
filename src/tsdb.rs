@@ -92,6 +92,16 @@ impl Tsl {
     pub fn status(&self) -> TslStatus {
         self.status
     }
+
+    /// The address of this TSL's blob data within the database.
+    pub fn log_addr(&self) -> u32 {
+        self.addr_log
+    }
+
+    /// The address of this TSL's index record within the database.
+    pub fn index_addr(&self) -> u32 {
+        self.addr_index
+    }
 }
 
 /// Sector descriptor, mirrors `struct tsdb_sec_info`.
