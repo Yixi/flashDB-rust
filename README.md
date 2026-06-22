@@ -31,7 +31,7 @@ You can implement [`Storage`] yourself to target real flash hardware.
 use flashdb::{Kvdb, RamStorage};
 
 // 4 sectors of 4 KiB each.
-let storage = RamStorage::new(4096, 4096 * 4);
+let storage = RamStorage::new(4096 * 4);
 let mut db = Kvdb::new(storage, 4096, 4096 * 4, None).unwrap();
 
 db.set(b"boot_count", b"42").unwrap();

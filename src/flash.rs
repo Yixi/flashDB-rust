@@ -57,11 +57,11 @@ pub(crate) fn continue_ff_addr<S: Storage>(s: &mut S, mut start: u32, end: u32) 
             (end - start) as usize
         };
         let _ = s.read(start, &mut buf[..read_size]);
-        for i in 0..read_size {
-            if last_data != BYTE_ERASED && buf[i] == BYTE_ERASED {
+        for (i, &b) in buf[..read_size].iter().enumerate() {
+            if last_data != BYTE_ERASED && b == BYTE_ERASED {
                 addr = start + i as u32;
             }
-            last_data = buf[i];
+            last_data = b;
         }
         start = start.wrapping_add(buf.len() as u32);
     }
