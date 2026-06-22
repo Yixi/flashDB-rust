@@ -56,6 +56,17 @@ impl RamStorage {
         }
     }
 
+    /// Create a backend from existing bytes (e.g. a previously captured image),
+    /// useful for simulating a reboot from a known on-storage state.
+    pub fn from_bytes(bytes: Vec<u8>) -> Self {
+        RamStorage { mem: bytes }
+    }
+
+    /// Take ownership of the backing bytes.
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.mem
+    }
+
     /// Borrow the raw backing bytes (handy for assertions in tests).
     pub fn as_bytes(&self) -> &[u8] {
         &self.mem
